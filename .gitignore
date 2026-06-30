@@ -1,0 +1,17 @@
+.DS_Store
+*.log
+
+# Dependencies and build output
+node_modules/
+.next/
+out/
+.vercel/
+
+# Local migration inputs and backups
+database/
+files/
+*.sql
+*.tar.gz
+*.tar.gz.partial
+download_goneo_*.sh
+
