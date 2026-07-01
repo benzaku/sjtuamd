@@ -25,7 +25,7 @@ export function HomeView({ locale }: { locale: Locale }) {
         <div className="hero-content">
           <div className="hero-copy">
             <p className="eyebrow">{t.hero.eyebrow}</p>
-            <h1>{t.hero.title}</h1>
+            <h1 className={locale === 'de' ? 'hero-title-long' : undefined}>{t.hero.title}</h1>
             <p>{t.hero.tagline}</p>
             <div className="hero-actions">
               <Link className="button primary" href={localizeHref('/news', locale)}>

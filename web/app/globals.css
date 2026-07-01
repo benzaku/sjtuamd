@@ -305,6 +305,13 @@ p {
   text-shadow: 0 4px 24px rgba(0, 0, 0, 0.34);
 }
 
+/* Long localized titles (e.g. the full German association name) use a smaller,
+   still-prominent size so they don't dominate the hero. */
+.hero h1.hero-title-long {
+  font-size: clamp(24px, 3vw, 40px);
+  line-height: 1.18;
+}
+
 .hero p:not(.eyebrow) {
   max-width: 700px;
   margin: 22px 0 0;
