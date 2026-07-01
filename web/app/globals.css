@@ -123,6 +123,22 @@ img {
   color: white;
 }
 
+.lang-switch {
+  flex: 0 0 auto;
+  padding: 6px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.lang-switch:hover {
+  border-color: white;
+  color: white;
+}
+
 .mobile-nav {
   position: relative;
   display: none;
@@ -861,6 +877,10 @@ time {
   }
 
   .primary-nav {
+    display: none;
+  }
+
+  .lang-switch {
     display: none;
   }
 

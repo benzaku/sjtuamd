@@ -1,7 +1,9 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
-import siteData from '../src/data/generated/site.json';
+import zhSiteData from '../src/data/generated/site.json';
+import deSiteData from '../src/data/generated/site.de.json';
 import { markdownToHtml, parseMarkdownFile, plainTextFromMarkdown } from './markdown';
+import { messages, type Locale } from './i18n';
 
 export type LegacyFile = {
   fid: number;
@@ -39,11 +41,6 @@ export type ContentItem = {
   terms: string[];
 };
 
-export type NavItem = {
-  label: string;
-  href: string;
-};
-
 export type SiteData = {
   generatedAt: string;
   stats: {
@@ -55,7 +52,6 @@ export type SiteData = {
     copiedFiles: number;
     legacyFileBytes: number;
   };
-  nav: NavItem[];
   featuredSlugs: string[];
   pages: ContentItem[];
   articles: ContentItem[];
@@ -63,7 +59,17 @@ export type SiteData = {
   files: LegacyFile[];
 };
 
-const generatedSite = siteData as SiteData;
+type ResolvedSite = {
+  site: SiteData;
+  allContent: ContentItem[];
+  bySlug: Map<string, ContentItem>;
+  byNid: Map<string, ContentItem>;
+};
+
+const generatedByLocale: Record<Locale, SiteData> = {
+  zh: zhSiteData as unknown as SiteData,
+  de: deSiteData as unknown as SiteData
+};
 
 function frontmatterString(value: string | boolean | undefined) {
   return typeof value === 'string' ? value.trim() : undefined;
@@ -74,7 +80,7 @@ function normalizeSlug(value: string) {
     .trim()
     .replace(/^\/+|\/+$/g, '')
     .replace(/\s+/g, '-')
-    .replace(/[^A-Za-z0-9\u4e00-\u9fff._-]/g, '-')
+    .replace(/[^A-Za-z0-9一-鿿._-]/g, '-')
     .replace(/-+/g, '-');
 }
 
@@ -174,33 +180,58 @@ function loadMarkdownArticles(): ContentItem[] {
     });
 }
 
+// Markdown articles are authored once (in Chinese) and shared across locales.
 const markdownArticles = loadMarkdownArticles();
 
-export const site: SiteData = {
-  ...generatedSite,
-  stats: {
-    ...generatedSite.stats,
-    publishedContent: generatedSite.stats.publishedContent + markdownArticles.length,
-    articles: generatedSite.stats.articles + markdownArticles.length
-  },
-  articles: [...markdownArticles, ...generatedSite.articles].sort((a, b) => b.created - a.created)
-};
-
-export const allContent = [...site.pages, ...site.articles, ...site.galleries];
-
-const contentBySlug = new Map(allContent.map((item) => [item.slug, item]));
-const contentByNid = new Map(allContent.map((item) => [String(item.nid), item]));
-
-export function getContentBySlug(slug: string) {
-  return contentBySlug.get(slug);
+function buildSite(generated: SiteData): SiteData {
+  return {
+    ...generated,
+    stats: {
+      ...generated.stats,
+      publishedContent: generated.stats.publishedContent + markdownArticles.length,
+      articles: generated.stats.articles + markdownArticles.length
+    },
+    articles: [...markdownArticles, ...generated.articles].sort((a, b) => b.created - a.created)
+  };
 }
 
-export function getContentByNid(nid: string) {
-  return contentByNid.get(nid);
+const resolvedCache = new Map<Locale, ResolvedSite>();
+
+function resolve(locale: Locale): ResolvedSite {
+  const cached = resolvedCache.get(locale);
+  if (cached) return cached;
+
+  const site = buildSite(generatedByLocale[locale]);
+  const allContent = [...site.pages, ...site.articles, ...site.galleries];
+  const resolved: ResolvedSite = {
+    site,
+    allContent,
+    bySlug: new Map(allContent.map((item) => [item.slug, item])),
+    byNid: new Map(allContent.map((item) => [String(item.nid), item]))
+  };
+
+  resolvedCache.set(locale, resolved);
+  return resolved;
 }
 
-export function formatDate(isoDate: string) {
-  return new Intl.DateTimeFormat('zh-CN', {
+export function getSite(locale: Locale): SiteData {
+  return resolve(locale).site;
+}
+
+export function allContent(locale: Locale): ContentItem[] {
+  return resolve(locale).allContent;
+}
+
+export function getContentBySlug(locale: Locale, slug: string) {
+  return resolve(locale).bySlug.get(slug);
+}
+
+export function getContentByNid(locale: Locale, nid: string) {
+  return resolve(locale).byNid.get(nid);
+}
+
+export function formatDate(locale: Locale, isoDate: string) {
+  return new Intl.DateTimeFormat(messages(locale).dateLocale, {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -242,18 +273,19 @@ function firstInlineImage(item: ContentItem): LegacyFile | null {
   return null;
 }
 
-export function featuredPages() {
+export function featuredPages(locale: Locale) {
+  const { site } = resolve(locale);
   return site.featuredSlugs
-    .map((slug) => getContentBySlug(slug))
+    .map((slug) => getContentBySlug(locale, slug))
     .filter((item): item is ContentItem => Boolean(item));
 }
 
-export function latestArticles(limit = 8) {
-  return site.articles.slice(0, limit);
+export function latestArticles(locale: Locale, limit = 8) {
+  return resolve(locale).site.articles.slice(0, limit);
 }
 
-export function relatedArticles(item: ContentItem, limit = 3) {
-  return site.articles
-    .filter((article) => article.nid !== item.nid && article.year === item.year)
+export function relatedArticles(locale: Locale, item: ContentItem, limit = 3) {
+  return resolve(locale)
+    .site.articles.filter((article) => article.nid !== item.nid && article.year === item.year)
     .slice(0, limit);
 }
