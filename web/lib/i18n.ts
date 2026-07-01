@@ -105,7 +105,7 @@ const zh: Messages = {
 const de: Messages = {
   htmlLang: 'de',
   dateLocale: 'de-DE',
-  brand: { strong: 'SJTU Absolventen- & Mitgliederverein', small: 'SJTUAMD e.V.', homeAria: 'Startseite des SJTUAMD e.V.' },
+  brand: { strong: 'SJTUAMD e.V.', small: 'Absolventen- & Mitgliederverein', homeAria: 'Startseite des SJTUAMD e.V.' },
   nav: [
     { label: 'Startseite', path: '/' },
     { label: 'Aktuelles', path: '/news' },
