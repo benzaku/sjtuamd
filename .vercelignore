@@ -1,0 +1,13 @@
+files
+database
+*.sql
+*.tar.gz
+*.tar.gz.partial
+download_goneo_*.sh
+.git
+node_modules
+web/node_modules
+web/.next
+.next
+*.log
+.DS_Store

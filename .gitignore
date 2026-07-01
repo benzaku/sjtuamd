@@ -15,3 +15,4 @@ files/
 *.tar.gz.partial
 download_goneo_*.sh
 
+.vercel
