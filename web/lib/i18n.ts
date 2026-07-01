@@ -105,7 +105,7 @@ const zh: Messages = {
 const de: Messages = {
   htmlLang: 'de',
   dateLocale: 'de-DE',
-  brand: { strong: 'Alumni-Verein Deutschland', small: 'SJTUAMD', homeAria: 'Startseite des SJTU Alumni-Vereins Deutschland' },
+  brand: { strong: 'SJTU Absolventen- & Mitgliederverein', small: 'SJTUAMD e.V.', homeAria: 'Startseite des SJTUAMD e.V.' },
   nav: [
     { label: 'Startseite', path: '/' },
     { label: 'Aktuelles', path: '/news' },
@@ -117,8 +117,8 @@ const de: Messages = {
   langSwitch: { toLabel: '中文', aria: '切换到中文版' },
   mobileMenu: 'Menü',
   hero: {
-    eyebrow: 'SJTU Alumni Deutschland',
-    title: 'Alumni-Verein der SJTU in Deutschland',
+    eyebrow: 'SJTUAMD e.V.',
+    title: 'Verein der Absolventen und Mitglieder der Shanghai Jiao Tong Universität in Deutschland e.V.',
     tagline:
       'Wir verbinden SJTU-Alumni in Deutschland, dokumentieren Vereinsaktivitäten und den Austausch mit der Universität und bewahren die gemeinsame Erinnerung an unsere Wurzeln.',
     browseNews: 'Aktuelles ansehen',
@@ -147,7 +147,7 @@ const de: Messages = {
     related: 'Berichte aus demselben Jahr'
   },
   footer: {
-    strong: 'SJTU Alumni-Verein Deutschland',
+    strong: 'Verein der Absolventen und Mitglieder der Shanghai Jiao Tong Universität in Deutschland e.V.',
     english: 'Shanghai Jiao Tong University Alumni Association in Germany',
     links: 'Links',
     partner: 'Partner',
@@ -160,10 +160,10 @@ const de: Messages = {
     home: 'Zur Startseite'
   },
   meta: {
-    defaultTitle: 'SJTU Alumni-Verein Deutschland',
-    template: '%s | SJTU Alumni-Verein Deutschland',
+    defaultTitle: 'Verein der Absolventen und Mitglieder der Shanghai Jiao Tong Universität in Deutschland e.V.',
+    template: '%s | SJTUAMD e.V.',
     description:
-      'Offizielle Website des Alumni-Vereins der Shanghai Jiao Tong Universität in Deutschland: Aktivitäten, Neuigkeiten, Dokumente und Fotos.'
+      'Offizielle Website des Vereins der Absolventen und Mitglieder der Shanghai Jiao Tong Universität in Deutschland e.V. (SJTUAMD): Aktivitäten, Neuigkeiten, Dokumente und Fotos.'
   }
 };
 
