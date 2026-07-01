@@ -986,9 +986,14 @@ time {
   }
 
   .hero-actions {
+    width: 100%;
     display: grid;
     grid-template-columns: 1fr;
     gap: 10px;
+  }
+
+  .hero-actions .button {
+    width: 100%;
   }
 
   .button {
