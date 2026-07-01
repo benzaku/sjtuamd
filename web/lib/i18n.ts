@@ -120,7 +120,7 @@ const de: Messages = {
     eyebrow: 'SJTUAMD e.V.',
     title: 'Verein der Absolventen und Mitglieder der Shanghai Jiao Tong Universität in Deutschland e.V.',
     tagline:
-      'Wir verbinden SJTU-Alumni in Deutschland, dokumentieren Vereinsaktivitäten und den Austausch mit der Universität und bewahren die gemeinsame Erinnerung an unsere Wurzeln.',
+      'Wir vernetzen SJTU-Alumni in Deutschland und pflegen Aktivitäten, den Austausch mit der Universität und gemeinsame Erinnerungen.',
     browseNews: 'Aktuelles ansehen',
     join: 'Mitglied werden',
     albumAria: 'Fotoalbum der Vereinsaktivitäten'
