@@ -4,3 +4,5 @@ out
 *.log
 .vercel
 scripts/.translation-cache.json
+playwright-report
+test-results
