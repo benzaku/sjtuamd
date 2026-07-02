@@ -83,6 +83,17 @@ test.describe('navigation', () => {
     await page.goto('/gallery');
     await expect(page.locator('.gallery-card').first()).toBeVisible();
   });
+
+  test('mobile dropdown collapses after selecting an item', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'mobile', 'mobile-only behavior');
+    await page.goto('/');
+    const details = page.locator('details.mobile-nav');
+    await details.locator('summary').click();
+    await expect(details).toHaveJSProperty('open', true);
+    await page.locator('.mobile-nav-panel a').filter({ hasText: '活动新闻' }).first().click();
+    await expect(page).toHaveURL(/\/news$/);
+    await expect(details).toHaveJSProperty('open', false);
+  });
 });
 
 test.describe('content pages', () => {

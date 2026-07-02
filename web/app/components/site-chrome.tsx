@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -40,12 +40,28 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
   const otherLocale = locale === 'zh' ? 'de' : 'zh';
   const switchPath = switchLocalePath(currentPath, otherLocale);
 
+  const mobileNavRef = useRef<HTMLDetailsElement>(null);
+  const closeMobileNav = () => {
+    if (mobileNavRef.current) mobileNavRef.current.open = false;
+  };
+
   useEffect(() => {
     document.documentElement.lang = t.htmlLang;
   }, [t.htmlLang]);
 
+  // Client-side navigation doesn't reload the page, so collapse the mobile
+  // dropdown whenever the route changes (i.e. after a menu item is selected).
+  useEffect(() => {
+    closeMobileNav();
+  }, [pathname]);
+
   const navLinks = nav.map((item) => (
-    <Link key={item.href} href={item.href} aria-current={isActivePath(currentPath, item.href) ? 'page' : undefined}>
+    <Link
+      key={item.href}
+      href={item.href}
+      aria-current={isActivePath(currentPath, item.href) ? 'page' : undefined}
+      onClick={closeMobileNav}
+    >
       {item.label}
     </Link>
   ));
@@ -67,13 +83,13 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
           <Link className="lang-switch" href={switchPath} aria-label={t.langSwitch.aria}>
             {t.langSwitch.toLabel}
           </Link>
-          <details className="mobile-nav">
+          <details className="mobile-nav" ref={mobileNavRef}>
             <summary>
               <span>{currentLabel(currentPath, nav, t.mobileMenu)}</span>
             </summary>
             <nav className="mobile-nav-panel" aria-label={t.brand.strong}>
               {navLinks}
-              <Link href={switchPath} aria-label={t.langSwitch.aria}>
+              <Link href={switchPath} aria-label={t.langSwitch.aria} onClick={closeMobileNav}>
                 {t.langSwitch.toLabel}
               </Link>
             </nav>
