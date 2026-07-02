@@ -40,7 +40,7 @@ export function HomeView({ locale }: { locale: Locale }) {
                 <div className="hero-album-track">
                   {[...heroPhotos, ...heroPhotos].map((photo, index) => (
                     <Link className="hero-photo" href={localizeHref(`/${photo.gallerySlug}`, locale)} key={`${photo.fid}-${index}`}>
-                      <img src={photo.url} alt={photo.alt || photo.galleryTitle} />
+                      <img src={photo.url} alt={photo.alt || photo.galleryTitle} loading="lazy" />
                     </Link>
                   ))}
                 </div>
@@ -72,7 +72,7 @@ export function HomeView({ locale }: { locale: Locale }) {
             const image = bestImage(article);
             return (
               <Link className="article-card" href={localizeHref(`/${article.slug}`, locale)} key={article.nid}>
-                {image ? <img src={image.url} alt={image.alt || article.title} /> : null}
+                {image ? <img src={image.url} alt={image.alt || article.title} loading="lazy" /> : null}
                 <div>
                   <time>{formatDate(locale, article.createdISO)}</time>
                   <h3>{article.title}</h3>
@@ -97,7 +97,7 @@ export function HomeView({ locale }: { locale: Locale }) {
             const image = bestImage(gallery);
             return (
               <Link className="gallery-card" href={localizeHref(`/${gallery.slug}`, locale)} key={gallery.nid}>
-                {image ? <img src={image.url} alt={image.alt || gallery.title} /> : null}
+                {image ? <img src={image.url} alt={image.alt || gallery.title} loading="lazy" /> : null}
                 <span>{gallery.title}</span>
               </Link>
             );

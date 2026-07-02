@@ -18,7 +18,7 @@ export function GalleryView({ locale }: { locale: Locale }) {
           const image = bestImage(gallery);
           return (
             <Link className="gallery-card" href={localizeHref(`/${gallery.slug}`, locale)} key={gallery.nid}>
-              {image ? <img src={image.url} alt={image.alt || gallery.title} /> : null}
+              {image ? <img src={image.url} alt={image.alt || gallery.title} loading="lazy" /> : null}
               <span>{gallery.title}</span>
               <small>{t.gallery.photoCount(gallery.photos.length)}</small>
             </Link>

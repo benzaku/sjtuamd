@@ -25,7 +25,7 @@ export function NewsView({ locale }: { locale: Locale }) {
                 const image = bestImage(article);
                 return (
                   <Link className="article-row" href={localizeHref(`/${article.slug}`, locale)} key={article.nid}>
-                    {image ? <img src={image.url} alt={image.alt || article.title} /> : <span className="date-tile">{year}</span>}
+                    {image ? <img src={image.url} alt={image.alt || article.title} loading="lazy" /> : <span className="date-tile">{year}</span>}
                     <div>
                       <time>{formatDate(locale, article.createdISO)}</time>
                       <h3>{article.title}</h3>
