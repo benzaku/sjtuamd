@@ -114,3 +114,29 @@ vercel --global-config ~/.vercel-sjtuamd deploy --archive=tgz --prod   # product
 
 You can run `vercel deploy` from either the repo root or `web/`; the project link lives at
 the repo root and `rootDirectory = web` selects the app.
+
+#### Domain & DNS (`sjtu-germany.de`)
+
+Production domain is **`sjtu-germany.de`**, served by Vercel. **DNS stays at goneo**
+(nameservers `ns1.goneo.de` / `ns2.goneo.de`) — only the web records point to Vercel; the
+nameservers are NOT delegated to Vercel.
+
+Records set in the goneo DNS panel:
+
+| Host | Type | Value | Note |
+|------|------|-------|------|
+| `@` (apex) | A | `76.76.21.21` | Vercel. Alt (preferred) pair: `216.198.79.1` + `64.29.17.1` |
+| `www` | CNAME | `cname.vercel-dns.com.` | Optimal alt: `80fca28eabab1f2c.vercel-dns-017.com.` |
+
+- **`www` 308-redirects to the apex** (configured on the Vercel project domain). Apex is canonical.
+- **Do NOT touch MX / TXT / NS at goneo.** Email stays on goneo (`mx01/mx02.goneo.de`);
+  changing nameservers or MX would break mail.
+- Vercel provisions the HTTPS cert automatically once records resolve.
+- Both domains + `sjtuamd.vercel.app` are attached to the project; production deploys serve
+  all three. Verify config with:
+  ```bash
+  TOKEN=$(python3 -c "import json;print(json.load(open('$HOME/.vercel-sjtuamd/auth.json'))['token'])")
+  curl -s "https://api.vercel.com/v6/domains/sjtu-germany.de/config?teamId=team_B7GCn1CCp2PPmhZaJyZPqGOk" \
+    -H "Authorization: Bearer $TOKEN" | python3 -c "import sys,json;print('misconfigured:',json.load(sys.stdin)['misconfigured'])"
+  # expect: misconfigured: False
+  ```
