@@ -183,15 +183,87 @@ function loadMarkdownArticles(): ContentItem[] {
 // Markdown articles are authored once (in Chinese) and shared across locales.
 const markdownArticles = loadMarkdownArticles();
 
-function buildSite(generated: SiteData): SiteData {
+type ImportedRecord = {
+  slug: string;
+  sourceUrl: string;
+  date: string;
+  created: number;
+  title: string;
+  summary: string;
+  cover: string | null;
+  bodyHtml: string;
+  de: { title: string; summary: string; bodyHtml: string } | null;
+};
+
+function loadImportedRecords(): ImportedRecord[] {
+  const dir = path.join(process.cwd(), 'content', 'imported');
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir)
+    .filter((f) => f.endsWith('.json'))
+    .map((f) => JSON.parse(readFileSync(path.join(dir, f), 'utf8')) as ImportedRecord)
+    .sort((a, b) => a.created - b.created);
+}
+
+const importedRecords = loadImportedRecords();
+
+// Imported WeChat articles: full-mirror HTML content, one JSON per article, with
+// an optional pre-translated German (`de`) variant.
+function importedArticles(locale: Locale): ContentItem[] {
+  return importedRecords.map((record, index) => {
+    const useDe = locale === 'de' && record.de;
+    const title = useDe ? record.de!.title : record.title;
+    const summary = (useDe ? record.de!.summary : record.summary) || '';
+    const bodyHtml = useDe ? record.de!.bodyHtml : record.bodyHtml;
+    const images: LegacyFile[] = record.cover
+      ? [{
+          fid: -400000 - index,
+          filename: path.basename(record.cover),
+          uri: record.cover,
+          url: record.cover,
+          mime: mimeFromPath(record.cover),
+          size: 0,
+          copied: true,
+          alt: title,
+          title,
+          width: null,
+          height: null
+        }]
+      : [];
+
+    return {
+      nid: -300000 - index,
+      type: 'article',
+      language: locale === 'de' ? 'de' : 'zh-hans',
+      title,
+      slug: record.slug,
+      created: record.created,
+      changed: record.created,
+      createdISO: new Date(record.created * 1000).toISOString(),
+      changedISO: new Date(record.created * 1000).toISOString(),
+      year: new Date(record.created * 1000).getUTCFullYear(),
+      bodyHtml,
+      summary,
+      excerpt: summary,
+      promoted: true,
+      sticky: false,
+      photos: [],
+      images,
+      attachments: [],
+      terms: []
+    };
+  });
+}
+
+function buildSite(generated: SiteData, locale: Locale): SiteData {
+  const extra = [...markdownArticles, ...importedArticles(locale)];
   return {
     ...generated,
     stats: {
       ...generated.stats,
-      publishedContent: generated.stats.publishedContent + markdownArticles.length,
-      articles: generated.stats.articles + markdownArticles.length
+      publishedContent: generated.stats.publishedContent + extra.length,
+      articles: generated.stats.articles + extra.length
     },
-    articles: [...markdownArticles, ...generated.articles].sort((a, b) => b.created - a.created)
+    articles: [...extra, ...generated.articles].sort((a, b) => b.created - a.created)
   };
 }
 
@@ -201,7 +273,7 @@ function resolve(locale: Locale): ResolvedSite {
   const cached = resolvedCache.get(locale);
   if (cached) return cached;
 
-  const site = buildSite(generatedByLocale[locale]);
+  const site = buildSite(generatedByLocale[locale], locale);
   const allContent = [...site.pages, ...site.articles, ...site.galleries];
   const resolved: ResolvedSite = {
     site,
